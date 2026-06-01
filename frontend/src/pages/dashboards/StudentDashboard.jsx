@@ -180,7 +180,6 @@ export default function StudentDashboard() {
     const [showRecommendedOnly, setShowRecommendedOnly] = useState(false);
     const [myApplications, setMyApplications] = useState([]);
 
-    const [selectedCV, setSelectedCV] = useState(null);
     const [coverLetter, setCoverLetter] = useState('');
     const [cvFile, setCvFile] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -317,6 +316,16 @@ export default function StudentDashboard() {
             skillsString.toLowerCase().includes(query)
         );
     });
+
+    const normalizeFileUrl = (fileUrl) => {
+        if (!fileUrl) return null;
+        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+            return fileUrl;
+        }
+
+        const apiOrigin = new URL(API.defaults.baseURL).origin;
+        return `${apiOrigin}${fileUrl.startsWith('/') ? '' : '/'}${fileUrl}`;
+    };
 
     const formatDate = (dateStr) =>
         new Date(dateStr).toLocaleString('fr-FR', {
@@ -596,9 +605,12 @@ export default function StudentDashboard() {
                                                 )}
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        setSelectedCV(`http://127.0.0.1:8000${app.cv_file}`)
-                                                    }
+                                                    onClick={() => {
+                                                        const url = normalizeFileUrl(app.cv_file);
+                                                        if (url) {
+                                                            window.open(url, '_blank', 'noopener noreferrer');
+                                                        }
+                                                    }}
                                                     className="px-3 py-1.5 rounded-lg text-xs font-bold border border-[#7DA0CA] text-[#052659] hover:bg-[#C1E8FF]/40"
                                                 >
                                                     Mon CV
@@ -913,23 +925,6 @@ export default function StudentDashboard() {
                 </aside>
             </div>
 
-            {/* CV modal */}
-            {selectedCV && (
-                <div className="fixed inset-0 bg-[#052659]/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-                        <div className="px-6 py-3 border-b border-[#C1E8FF] flex justify-between items-center">
-                            <span className="text-sm font-bold text-[#052659]">Aperçu CV</span>
-                            <button
-                                onClick={() => setSelectedCV(null)}
-                                className="px-4 py-1.5 rounded-xl bg-[#052659] text-white text-xs font-semibold"
-                            >
-                                Fermer
-                            </button>
-                        </div>
-                        <iframe src={selectedCV} title="CV" className="w-full flex-1" />
-                    </div>
-                </div>
-            )}
 
             {/* Modale feedback entretien — fond flouté */}
             {selectedMeeting && (

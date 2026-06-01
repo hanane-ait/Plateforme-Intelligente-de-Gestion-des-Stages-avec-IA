@@ -516,10 +516,13 @@ def _enrich_ranking_rows(offer, applications, ranking_items, request):
 
 
 def _persist_rankings(offer, ranking_items):
+    valid_application_ids = set(
+        Application.objects.filter(offer=offer).values_list('id', flat=True)
+    )
     for item in ranking_items:
         app_id = item.get("application_id")
         rank = item.get("rank")
-        if not app_id or rank is None:
+        if not app_id or rank is None or app_id not in valid_application_ids:
             continue
         CandidateRanking.objects.update_or_create(
             offer=offer,

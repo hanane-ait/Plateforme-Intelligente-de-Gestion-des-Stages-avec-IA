@@ -125,6 +125,14 @@ function MiniCalendar({ meetingDates }) {
     );
 }
 
+function normalizeFileUrl(fileUrl) {
+    if (!fileUrl) return null;
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+        return fileUrl;
+    }
+    return `${window.location.origin}${fileUrl.startsWith('/') ? '' : '/'}${fileUrl}`;
+}
+
 export default function CompanyDashboard() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -673,7 +681,7 @@ export default function CompanyDashboard() {
                                                     Détails IA
                                                 </button>
                                                 <a
-                                                    href={`http://127.0.0.1:8000${app.cv_file}`}
+                                                    href={normalizeFileUrl(app.cv_file)}
                                                     target="_blank"
                                                     rel="noreferrer"
                                                     className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#C1E8FF] text-[#052659]"

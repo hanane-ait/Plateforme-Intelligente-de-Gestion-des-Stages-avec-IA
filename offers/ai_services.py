@@ -165,6 +165,8 @@ Compétences requises : {', '.join(offer.skills_required) if isinstance(offer.sk
 Technologies : {', '.join(offer.technologies) if isinstance(offer.technologies, list) else offer.technologies}
 """
 
+    application_ids = [str(app.id) for app in applications]
+
     # Construction du résumé de chaque candidat
     candidates_info = ""
     for app in applications:
@@ -177,6 +179,9 @@ Candidat ID {app.id} ({app.student.username}) :
 
     prompt = f"""
 Tu es un recruteur senior. Classe ces candidats du plus au moins adapté pour ce poste.
+
+Utilise uniquement ces IDs de candidature : [{', '.join(application_ids)}].
+Ne génère PAS d'autres IDs et ne mentionne aucun autre numéro.
 
 Retourne UNIQUEMENT un JSON valide, sans texte avant ou après :
 
